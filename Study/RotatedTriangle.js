@@ -11,7 +11,9 @@ var FSHADER_SORCE =
     '}\n';
 
 
-var ANGLE = 60.0;
+var ANGLE = 80.0;
+var Tx = 0.2,Ty=0.40,Tz = 0.0;
+var Scale = 1.5;
 function main(){
     var canvas = document.getElementById('WebGL');
     var gl = getWebGLContext(canvas);
@@ -22,16 +24,35 @@ function main(){
     var n = initVertexBuffers(gl);
     if(n<0)return;
 
-    var radian = Math.PI * ANGLE/180.0;
-    var cosB = Math.cos(radian);
-    var sinB = Math.sin(radian);
+    // var radian = Math.PI * ANGLE/180.0;
+    // var cosB = Math.cos(radian);
+    // var sinB = Math.sin(radian);
 
-    var xformMatrix = new Float32Array([
-        cosB,sinB,0.0,0.0,
-        -sinB,cosB,0.0,0.0,
-        0.0,0.0,1.0,0.0,
-        0.0,0.0,0.0,1.0
-    ])
+    // var xformMatrix = new Float32Array([
+    //     cosB,sinB,0.0,0.0,
+    //     -sinB,cosB,0.0,0.0,
+    //     0.0,0.0,1.0,0.0,
+    //     0.0,0.0,0.0,1.0
+    // ])
+
+    var xformMatrix = new Matrix4();
+    xformMatrix.rotate(ANGLE,0,1,0);
+    // xformMatrix.setTranslate(Tx,Ty,Tz);
+    // xformMatrix.setScale(Scale,Scale,Scale);
+
+    // var xformMatrix = new Float32Array([
+    //     1.0,0.0,0.0,0.0,
+    //     0.0,1.0,0.0,0.0,
+    //     0.0,0.0,1.0,0.0,
+    //     Tx,Ty,Tz,1.0
+    // ])
+
+    // var xformMatrix = new Float32Array([
+    //     Scale,0.0,0.0,0.0,
+    //     0.0,Scale,0.0,0.0,
+    //     0.0,0.0,Scale,0.0,
+    //     0.0,0.0,0.0,1.0
+    // ])
 
     var u_xformMatrix = gl.getUniformLocation(gl.program,'u_xformMatrix');
     if(u_xformMatrix<0){
@@ -39,7 +60,7 @@ function main(){
         return;
     }
 
-    gl.uniformMatrix4fv(u_xformMatrix,false,xformMatrix);
+    gl.uniformMatrix4fv(u_xformMatrix,false,xformMatrix.elements);
 
     gl.clearColor(0.0,0.0,0.0,1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -65,6 +86,6 @@ function initVertexBuffers(gl){
 
     gl.vertexAttribPointer(a_Position,2,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(a_Position);
-
+    
     return n;
 }
